@@ -48,17 +48,18 @@ import wandb                    # Weights & Biases for experiment tracking
 import albumentations as A      # Image augmentation library
 
 # %%
+# %%
 #------------------------------------------------------------------------------
 # Base directory configurations
 #------------------------------------------------------------------------------
-PROJECT_BASE = r"C:\Users\Jai\Downloads\Individual Project Folder"
-BLENDER_BASE = os.path.join(PROJECT_BASE, "Blender_Renders")
-YOLOV8_BASE = os.path.join(PROJECT_BASE, "yolov8-project")
+PROJECT_BASE = r"C:\Users\Jai\Documents\GitHub\space-debris-detection-pipeline"
+BLENDER_ASSETS_BASE = os.path.join(PROJECT_BASE, "BLENDER_ASSETS")
+ML_ASSETS_BASE = os.path.join(PROJECT_BASE, "ML_ASSETS")
 
 #------------------------------------------------------------------------------
 # Dataset directory structure
 #------------------------------------------------------------------------------
-DATASET_BASE = os.path.join(YOLOV8_BASE, "dataset6")
+DATASET_BASE = os.path.join(ML_ASSETS_BASE, "dataset")
 DEBRIS_DIR = os.path.join(DATASET_BASE, "Debris")
 DEBRIS_SCALED_DIR = os.path.join(DATASET_BASE, "Debris_Scaled")
 DEBRIS_ANNOTATED_DIR = os.path.join(DATASET_BASE, "Debris_Annotated")
@@ -72,9 +73,9 @@ CONFIG_PATH = os.path.join(DEBRIS_SCALED_DIR, "config_scaled.yaml")
 # Blender application and script paths
 #------------------------------------------------------------------------------
 BLENDER_EXECUTABLE = r"C:\Program Files\Blender Foundation\Blender 4.2\blender.exe"
-BLEND_FILE = os.path.join(BLENDER_BASE, "Earth_render", "Earth.blend")
-BLENDER_SCRIPT = os.path.join(BLENDER_BASE, "Earth_render", "Crash Solution V3.py")
-FLAG_FILE = os.path.join(BLENDER_BASE, "Earth_render", "stop_flag.txt")
+BLEND_FILE = os.path.join(BLENDER_ASSETS_BASE, "blender_files", "model.blend")
+BLENDER_SCRIPT = os.path.join(BLENDER_ASSETS_BASE, "blender_files", "blender_script.py")
+FLAG_FILE = os.path.join(BLENDER_ASSETS_BASE, "blender_files", "stop_flag.txt")
 
 #------------------------------------------------------------------------------
 # Blender object coordinate paths
@@ -89,7 +90,7 @@ AUGMENTATION_SUMMARY = os.path.join(DEBRIS_SCALED_DIR, 'Augmentations Summary.tx
 #------------------------------------------------------------------------------
 # Python scripts location
 #------------------------------------------------------------------------------
-SCRIPTS_DIR = os.path.join(BLENDER_BASE, "Python Scripts")
+SCRIPTS_DIR = os.path.join(BLENDER_ASSETS_BASE, "Python Scripts")
 
 #------------------------------------------------------------------------------
 # YOLOv8 training configurations
@@ -98,6 +99,13 @@ WANDB_API_KEY = os.getenv('WANDB_API_KEY', "3a215434bfc6659b2f1ae767e669c8dcf196
 WANDB_PROJECT_NAME = "yolov8-debris-detection"
 MODEL_TYPE = "yolov8n.pt"
 RUN_NUMBER = "Run 9"
+EPOCH = 100
+BATCH_SIZE = 16
+
+#------------------------------------------------------------------------------
+# YOLOv8 inference configurations
+#------------------------------------------------------------------------------
+CONFIDENCE_THRESHOLD = 0.60
 
 #------------------------------------------------------------------------------
 # YOLOv-n confusion matrix CSV directories. Directories must be set manually each time. 
@@ -123,13 +131,23 @@ SPLITS = ["train", "val", "test"]
 ORIGINAL_SIZE = 1080
 NEW_SIZE = 640
 
+#------------------------------------------------------------------------------
+# Matplotlib fonts & background
+#------------------------------------------------------------------------------
+LATO_REGULAR_PATH = os.path.join(PROJECT_BASE,"ASSETS","Lato-Regular.ttf")
+LATO_BOLD_PATH = os.path.join(PROJECT_BASE,"ASSETS","Lato-Bold.ttf")
+LATO_ITALIC_PATH = os.path.join(PROJECT_BASE,"ASSETS","Lato-Italic.ttf")
+BG_IMAGE = os.path.join(PROJECT_BASE,"ASSETS","BG_IMAGE.png")
+
+
+# %%
 # %%
 #------------------------------------------------------------------------------
 # Blender Process Management Function
 #------------------------------------------------------------------------------
 # Check if the BLENDER_SCRIPT directory has existing .JSON and .txt files. If so, delete them before running this script.
 
-def restart_blender(delay=10):
+def restart_blender(delay: int = 10) -> None:
     """
     Continuously runs Blender in background mode to render specified .blend file and execute Python script.
     
@@ -176,10 +194,11 @@ def restart_blender(delay=10):
 restart_blender()
 
 # %%
+# %%
 #------------------------------------------------------------------------------
 # Dataset Resizing and Scaling Function
 #------------------------------------------------------------------------------
-def resize_and_scale_dataset():
+def resize_and_scale_dataset() -> None:
     """
     Resizes images and preserves corresponding labels for all dataset splits.
     
@@ -266,10 +285,11 @@ names:
 resize_and_scale_dataset()
 
 # %%
+# %%
 #------------------------------------------------------------------------------
 # Bounding Box Visualization Function
 #------------------------------------------------------------------------------
-def visualize_bounding_boxes():
+def visualize_bounding_boxes() -> None:
     """
     Creates visualization of bounding box annotations by:
     1. Reading images and corresponding label files
@@ -373,17 +393,18 @@ def visualize_bounding_boxes():
 visualize_bounding_boxes()
 
 # %%
+# %%
 # ---------------------------------------------------------------------------
 # Helper Functions to Read Images
 # ---------------------------------------------------------------------------
-def reading_image_albumentation(image_path):
+def reading_image_albumentation(image_path: str) -> np.ndarray:
     # Read image in BGR format using OpenCV
     read_image = cv2.imread(image_path, cv2.IMREAD_COLOR)
     # Convert BGR to RGB because albumentations expects an RGB image
     read_image = cv2.cvtColor(read_image, cv2.COLOR_BGR2RGB)
     return read_image
 
-def reading_image_cv2(image_path):
+def reading_image_cv2(image_path: str) -> np.ndarray:
     # Read image in BGR format using OpenCV (no conversion needed for cv2-based processing)
     read_image = cv2.imread(image_path, cv2.IMREAD_COLOR)
     return read_image
@@ -427,7 +448,7 @@ Motion_Blur_Transform = A.MotionBlur(
 Grayscale_Transform = A.ToGray(p=1.0)
 
 # Vignetting Transform: applies a vignette effect using Gaussian kernels.
-def Vignetting_Transform(image, strength=0.5):
+def Vignetting_Transform(image: np.ndarray, strength: float = 0.5) -> np.ndarray:
     rows, cols = image.shape[:2]
     # Create a Gaussian kernel for columns and rows
     X_resultant_kernel = cv2.getGaussianKernel(cols, cols * strength)
@@ -438,7 +459,7 @@ def Vignetting_Transform(image, strength=0.5):
     return vignetting
 
 # Lens Distortion Transform: simulates lens distortion effects.
-def Lens_Distortion_Transform(image, k1=-0.6, k2=0.2):
+def Lens_Distortion_Transform(image: np.ndarray, k1: float = -0.6, k2: float = 0.2) -> np.ndarray:
     h, w = image.shape[:2]
     # Define distortion coefficients and camera matrix
     dist_coeffs = np.array([k1, k2, 0, 0, 0])
@@ -449,7 +470,7 @@ def Lens_Distortion_Transform(image, k1=-0.6, k2=0.2):
     # Negative k1 typically creates a barrel distortion (bulging out), while positive k1 produces pincushion distortion (pinched edges).
 
 # Poisson Noise Transform: simulates Poisson noise that is more visible in dark regions.
-def Poisson_Noise_Transform(image, scale=0.1):
+def Poisson_Noise_Transform(image: np.ndarray, scale: float = 0.1) -> np.ndarray:
     image = image.astype(np.float32) / 255.0  # Normalize image to [0, 1] range.
     noisy = np.random.poisson(image * scale * 255.0) / (scale * 255.0)  # Apply Poisson noise.
     noisy = np.clip(noisy * 255.0, 0, 255).astype(np.uint8)
@@ -457,7 +478,7 @@ def Poisson_Noise_Transform(image, scale=0.1):
     # Poisson noise effect depends on the image brightness, and lower scale values will result in stronger visible noise.
 
 # Cosmic Ray Strikes Transform: simulates random bright spots due to cosmic ray strikes.
-def Cosmic_Ray_Strikes_Transform(image, num_strikes=100):
+def Cosmic_Ray_Strikes_Transform(image: np.ndarray, num_strikes: int = 100) -> np.ndarray:
     h, w, _ = image.shape  # Get image dimensions; ignore channel count (typically 3 for RGB).
     for _ in range(num_strikes):
         x, y = np.random.randint(0, w), np.random.randint(0, h)
@@ -471,7 +492,7 @@ def Cosmic_Ray_Strikes_Transform(image, num_strikes=100):
 # ---------------------------------------------------------------------------
 # Mapping augmentations to their application function and expected image type.
 # For albumentations transforms, the type is "alb". For custom cv2 functions, the type is "cv2".
-augmentations = {
+augmentations: Dict[str, Tuple[Any, str]] = {
     'gaussian': (Gaussian_Transform, 'alb'),
     'occlusion': (Random_Occlusion_Transform, 'alb'),
     'motion_blur': (Motion_Blur_Transform, 'alb'),
@@ -482,14 +503,14 @@ augmentations = {
     'cosmic_rays': (Cosmic_Ray_Strikes_Transform, 'cv2')
 }
 
-def apply_augmentations():
+def apply_augmentations() -> None:
     import time  # Import the time module to measure performance
     
     # Dictionary to store count for each augmentation
-    augmentation_counts = {}
+    augmentation_counts: Dict[str, int] = {}
     
     # Dictionary to store total time for each augmentation
-    augmentation_times = {}
+    augmentation_times: Dict[str, float] = {}
     
     # Loop through each dataset split (e.g., train, val, test)
     # os.listdir(images_dir) returns the list of filenames in the specified directory.
@@ -570,6 +591,7 @@ def apply_augmentations():
 # Uncomment the following line to execute the augmentation process.
 apply_augmentations()
 
+# %%
 # %%
 # ------------------------------------------------------------------------------
 # Setup and Utility Functions for W&B, GPU, Training, and Logging
@@ -767,7 +789,7 @@ def log_existing_results_to_wandb(results_dir: str) -> None:
     print("Existing results successfully uploaded to W&B.")
 
 
-def train_and_log_model(epochs=100, batch_size=16):
+def train_and_log_model(epochs: int = 100, batch_size: int = 16) -> None:
     """
     Complete pipeline for YOLOv8 model training with W&B integration.
     
@@ -794,13 +816,14 @@ def train_and_log_model(epochs=100, batch_size=16):
 # Function Execution
 # ------------------------------------------------------------------------------
 # Uncomment the following line to execute the training process.
-train_and_log_model(epochs=100, batch_size=16)
+train_and_log_model(epochs=EPOCH, batch_size=BATCH_SIZE)
 
+# %%
 # %%
 # ------------------------------------------------------------------------------
 # Inference Function for YOLOv8 Model
 # ------------------------------------------------------------------------------
-def run_inference(model_weight_path=None, confidence_threshold=0.80):
+def run_inference(model_weight_path: Optional[str] = None, confidence_threshold: float = 0.80) -> List[Any]:
     """
     Perform inference using a trained YOLOv8 model on test images.
     
@@ -808,6 +831,9 @@ def run_inference(model_weight_path=None, confidence_threshold=0.80):
         model_weight_path: Path to model weights. If None, uses a predefined path.
         confidence_threshold: Confidence threshold for detections (0-1).
     
+    Returns:
+        List of results from the model inference.
+        
     Creates timestamped results in the inference directory.
     """
     # --------------------------------------------------------------------------
@@ -868,20 +894,17 @@ def run_inference(model_weight_path=None, confidence_threshold=0.80):
 # Function Execution
 # ------------------------------------------------------------------------------
 # Uncomment the following line to execute the inference process
-run_inference(confidence_threshold=0.60)
+run_inference(confidence_threshold=CONFIDENCE_THRESHOLD)
 
 # %%
+# %%
 # ============================================================
-# SET UP MATPLOTLIB CONFIGURATION & FONT
+# SET UP MATPLOTLIB CONFIGURATION
 # ============================================================
-# Specify full path to the Lato font file and add it
-lato_regular_path = r"C:\Users\Jai\OneDrive - The University of Manchester\DESIGN\FONTS\Lato-Regular.ttf"
-lato_bold_path = r"C:\Users\Jai\OneDrive - The University of Manchester\DESIGN\FONTS\Lato-Bold.ttf"
-lato_italic_path = r"C:\Users\Jai\OneDrive - The University of Manchester\DESIGN\FONTS\Lato-Italic.ttf"
 
-fm.fontManager.addfont(lato_regular_path)
-fm.fontManager.addfont(lato_bold_path)
-fm.fontManager.addfont(lato_italic_path)
+fm.fontManager.addfont(LATO_REGULAR_PATH)
+fm.fontManager.addfont(LATO_BOLD_PATH)
+fm.fontManager.addfont(LATO_ITALIC_PATH)
 
 mpl.rcParams['font.family'] = 'sans-serif'
 mpl.rcParams['font.sans-serif'] = ['Lato']
@@ -889,7 +912,7 @@ mpl.rcParams['font.sans-serif'] = ['Lato']
 # ============================================================
 # UTILITY FUNCTION
 # ============================================================
-def save_to_csv(folder_path, filename, data_dict):
+def save_to_csv(folder_path: str, filename: str, data_dict: Dict[str, List]) -> None:
     """
     Save data from a dictionary to a CSV file.
     
@@ -906,7 +929,7 @@ def save_to_csv(folder_path, filename, data_dict):
 # ============================================================
 # DATA LOADING FUNCTIONS
 # ============================================================
-def load_coordinates(folder_path):
+def load_coordinates(folder_path: str) -> Tuple[List[float], List[float], List[float]]:
     """
     Load 3D coordinates from .txt files in the given folder.
     
@@ -952,7 +975,7 @@ def load_coordinates(folder_path):
     save_to_csv(folder_path, "coordinates.csv", {"x": x_vals, "y": y_vals, "z": z_vals})
     return x_vals, y_vals, z_vals
 
-def load_debris_quaternion_coordinates(folder_path):
+def load_debris_quaternion_coordinates(folder_path: str) -> Tuple[List[float], List[float], List[float], List[float]]:
     """
     Load quaternions from .txt files in the given folder.
     
@@ -1002,7 +1025,7 @@ def load_debris_quaternion_coordinates(folder_path):
     save_to_csv(folder_path, "debris_quaternion.csv", {"w": w_vals, "x": x_vals, "y": y_vals, "z": z_vals})
     return w_vals, x_vals, y_vals, z_vals
 
-def load_offset_values(folder_path):
+def load_offset_values(folder_path: str) -> Tuple[List[int], List[float]]:
     """
     Load offset values from .txt files in the provided folder.
     
@@ -1051,7 +1074,9 @@ def load_offset_values(folder_path):
 # ============================================================
 # PLOTTING FUNCTIONS
 # ============================================================
-def plot_3d_scatter(x_vals, y_vals, z_vals, title='Debris Coordinates', marker_size=20, alpha=0.7):
+def plot_3d_scatter(x_vals: List[float], y_vals: List[float], z_vals: List[float], 
+                    title: str = 'Debris Coordinates', marker_size: int = 20, 
+                    alpha: float = 0.7) -> plt.Figure:
     """
     Create a 3D scatter plot of the provided coordinates.
     
@@ -1066,8 +1091,6 @@ def plot_3d_scatter(x_vals, y_vals, z_vals, title='Debris Coordinates', marker_s
     Returns:
         matplotlib.figure.Figure: Figure containing the 3D scatter plot.
     """
-    BG_IMAGE = plt.imread(r"C:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset6\BG_IMAGE2.png")
-
     # Create figure
     fig = plt.figure(figsize=(10, 10))
 
@@ -1114,7 +1137,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation as R
 
-def plot_3d_quaternion_scatter(w_vals, x_vals, y_vals, z_vals, title='3D Quaternion Scatter', marker_size=20, alpha=0.7):
+def plot_3d_quaternion_scatter(w_vals: List[float], x_vals: List[float], 
+                              y_vals: List[float], z_vals: List[float], 
+                              title: str = '3D Quaternion Scatter', 
+                              marker_size: int = 20, alpha: float = 0.7) -> plt.Figure:
     """
     Create a 3D scatter plot of quaternion orientations.
     
@@ -1130,7 +1156,6 @@ def plot_3d_quaternion_scatter(w_vals, x_vals, y_vals, z_vals, title='3D Quatern
     Returns:
         matplotlib.figure.Figure: Figure containing the 3D scatter plot.
     """
-    BG_IMAGE = plt.imread(r"C:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset6\BG_IMAGE2.png")
 
     # Create figure
     fig = plt.figure(figsize=(10, 10))
@@ -1183,7 +1208,9 @@ def plot_3d_quaternion_scatter(w_vals, x_vals, y_vals, z_vals, title='3D Quatern
 
     return fig
 
-def plot_euler_angle_scatter(roll_vals, pitch_vals, yaw_vals, title='Scatter Plot of Euler Angles', marker_size=20, alpha=0.7):
+def plot_euler_angle_scatter(roll_vals: List[float], pitch_vals: List[float], yaw_vals: List[float], 
+                            title: str = 'Scatter Plot of Euler Angles', 
+                            marker_size: int = 20, alpha: float = 0.7) -> plt.Figure:
     """
     Create a 2D scatter plot for Roll vs Pitch, Roll vs Yaw, and Pitch vs Yaw,
     with a background image behind the main plot.
@@ -1199,7 +1226,6 @@ def plot_euler_angle_scatter(roll_vals, pitch_vals, yaw_vals, title='Scatter Plo
     Returns:
         matplotlib.figure.Figure: Figure containing the 2D scatter plot.
     """
-    BG_IMAGE = plt.imread(r"C:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset6\BG_IMAGE2.png")
 
     # Create the figure (no default axes yet)
     fig = plt.figure(figsize=(10, 8))
@@ -1240,7 +1266,9 @@ def plot_euler_angle_scatter(roll_vals, pitch_vals, yaw_vals, title='Scatter Plo
 
     return fig
 
-def plot_offset_values(frames, offsets, title='Offset Values', color='gray',xlabel="Enter Axis Title",ylabel="Enter Axis Title"):
+def plot_offset_values(frames: List[int], offsets: List[float], title: str = 'Offset Values', 
+                      color: str = 'gray', xlabel: str = "Enter Axis Title", 
+                      ylabel: str = "Enter Axis Title") -> plt.Figure:
     """
     Create a polar plot of offset values against frame numbers.
     
@@ -1252,16 +1280,12 @@ def plot_offset_values(frames, offsets, title='Offset Values', color='gray',xlab
         offsets (list): List of corresponding offset values.
         title (str): Plot title.
         color (str): Color for the markers.
+        xlabel (str): Label for the x-axis.
+        ylabel (str): Label for the y-axis.
     
     Returns:
         matplotlib.figure.Figure: Figure containing the polar plot.
     """
-    COLOR_BG = 'white'
-    COLOR_ANGULAR_AXIS_LABELS = 'black'
-    COLOR_RADIAL_AXIS_LABELS = 'black'
-    COLOR_AXIS_TITLE = 'black'
-    COLOR_TITLE = 'black'
-    BG_IMAGE = plt.imread(r"C:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset6\BG_IMAGE2.png")
 
     # Create figure
     fig = plt.figure(figsize=(8, 8))
@@ -1295,7 +1319,7 @@ def plot_offset_values(frames, offsets, title='Offset Values', color='gray',xlab
     labels = [str(int(frame + 1)) for frame in frame_ticks]
     labels[0] = ''
     labels[-1] = ''
-    ax.set_thetagrids(np.degrees(theta_ticks), labels=labels, color=COLOR_ANGULAR_AXIS_LABELS, fontsize=14, fontweight = 'bold')
+    ax.set_thetagrids(np.degrees(theta_ticks), labels=labels, color='black', fontsize=14, fontweight = 'bold')
 
     r_max = ax.get_rmax() 
     for i in range(num_ticks - 1):
@@ -1310,29 +1334,30 @@ def plot_offset_values(frames, offsets, title='Offset Values', color='gray',xlab
     for label in ax.get_yticklabels():
         label.set_zorder(10)
         label.set_fontweight('bold')
-        label.set_color(COLOR_RADIAL_AXIS_LABELS)
+        label.set_color('black')
         label.set_horizontalalignment('center')
 
     # Add text annotation showing the frame range along the outer edge
     angle = 0  # Corresponds to 0 degrees
     r_out = ax.get_rmax() * 1.115
     ax.text(angle, r_out, f"{int(frame_ticks[0])}, {int(frame_ticks[-1] + 1)}",
-            ha='center', va='center', color=COLOR_ANGULAR_AXIS_LABELS, fontsize=14, fontweight='bold')
+            ha='center', va='center', color='black', fontsize=14, fontweight='bold')
 
     # Place the plot title above the plot area
-    ax.set_title(title, va='bottom', pad=20, fontsize=34, color=COLOR_TITLE, fontstyle='italic')
+    ax.set_title(title, va='bottom', pad=20, fontsize=34, color='black', fontstyle='italic')
 
     # Add custom axis titles as annotations (they sit outside the main plot box)
     ax.text(np.radians(180), ax.get_rmax() * 1.2, ylabel,
-            ha='center', va='center', fontsize=20, color=COLOR_AXIS_TITLE, fontweight='bold', rotation=90)
+            ha='center', va='center', fontsize=20, color='black', fontweight='bold', rotation=90)
     ax.text(np.radians(270), ax.get_rmax() * 1.1, xlabel,
-            ha='center', va='center', fontsize=20, color=COLOR_AXIS_TITLE,fontweight='bold')
+            ha='center', va='center', fontsize=20, color='black',fontweight='bold')
 
     ax.grid(True)
 
     return fig
 
-def plot_augmentation_summary(summary_file_path, title='Augmentation Summary', bar_color='gray'):
+def plot_augmentation_summary(summary_file_path: str, title: str = 'Augmentation Summary', 
+                            bar_color: str = 'gray') -> plt.Figure:
     """
     Read an augmentations summary text file and create a bar chart.
     
@@ -1352,8 +1377,6 @@ def plot_augmentation_summary(summary_file_path, title='Augmentation Summary', b
         matplotlib.figure.Figure: Figure containing the bar chart.
     """
     import re
-    # Load the common background image
-    BG_IMAGE = plt.imread(r"C:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset6\BG_IMAGE2.png")
     
     # Create figure and background axes
     fig = plt.figure(figsize=(10, 6))
@@ -1421,7 +1444,14 @@ def plot_augmentation_summary(summary_file_path, title='Augmentation Summary', b
 
     return fig
 
-def confusion_matrices():
+def confusion_matrices() -> None:
+    """
+    Create and save confusion matrix visualizations for different YOLOv8 models.
+    
+    Reads confusion matrix data from CSV files and generates heatmap visualizations
+    for YOLOv8n, YOLOv11n, and YOLOv12n models with custom colors and styling.
+    Saves the resulting figures as PNG files in the Results directory.
+    """
     # Define the list of confusion matrix file paths and corresponding model names
     confusion_matrices = [CONFUSION_MATRIX_8, CONFUSION_MATRIX_11, CONFUSION_MATRIX_12]
     model_names = ["YOLOv8n", "YOLOv11n", "YOLOv12n"]
@@ -1482,17 +1512,13 @@ def confusion_matrices():
 # MAIN EXECUTION BLOCK
 # ============================================================
 if __name__ == "__main__":
-    # Define folders for data sources
-    debris_folder = r"C:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset5\orbit_container_coordinates"
-    container_folder = r"C:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset5\debris_tracking_container_coordinates"
-    camera_folder = r"C:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset5\camera_container_coordinates"
 
     # ------------------------------------------------------------
     # Process and plot 3D coordinates for debris
     # ------------------------------------------------------------
     print("\n===== PROCESSING DEBRIS COORDINATES =====")
     x_vals, y_vals, z_vals = load_coordinates(ORBIT_CONTAINER_COORDINATES)
-    debris_fig = plot_3d_scatter(x_vals, y_vals, z_vals,
+    occ_fig = plot_3d_scatter(x_vals, y_vals, z_vals,
                                  title='Debris position relative to Earth',
                                  marker_size=15, alpha=0.8)
 
@@ -1501,7 +1527,7 @@ if __name__ == "__main__":
     # ------------------------------------------------------------
     print("\n===== PROCESSING DEBRIS ORIENTATIONS QUATERNIONS =====")
     w_vals, x_vals, y_vals, z_vals = load_debris_quaternion_coordinates(QUATERNION_COORDINATES)
-    debris_quaternion_fig = plot_3d_quaternion_scatter(w_vals, x_vals, y_vals, z_vals,
+    qc_fig = plot_3d_quaternion_scatter(w_vals, x_vals, y_vals, z_vals,
                                                        title='Debris Orientation (Quaternion)',
                                                        marker_size=15, alpha=0.8)
     
@@ -1510,7 +1536,7 @@ if __name__ == "__main__":
     # ------------------------------------------------------------
     print("\n===== PROCESSING DEBRIS ORIENTATIONS EULER =====")
     roll_vals, pitch_vals, yaw_vals = load_coordinates(EULER_COORDINATES)
-    debris_euler_fig = plot_euler_angle_scatter(roll_vals, pitch_vals, yaw_vals,
+    ec_fig = plot_euler_angle_scatter(roll_vals, pitch_vals, yaw_vals,
                                                 title='Debris Orientation (Euler)',
                                                 marker_size=15, alpha=0.8)
 
@@ -1519,7 +1545,7 @@ if __name__ == "__main__":
     # ------------------------------------------------------------
     print("\n===== PROCESSING CONTAINER OFFSETS =====")
     container_frames, container_offsets = load_offset_values(DEBRIS_TRACKING_CONTAINER_COORDINATES)
-    container_fig = plot_offset_values(container_frames, container_offsets,
+    dtcc_fig = plot_offset_values(container_frames, container_offsets,
                                        title='Camera position relative to Debris',
                                        color='gray',
                                        ylabel="Position on 'Debris Tracking Geometry'",
@@ -1530,7 +1556,7 @@ if __name__ == "__main__":
     # ------------------------------------------------------------
     print("\n===== PROCESSING CAMERA OFFSETS =====")
     camera_frames, camera_offsets = load_offset_values(CAMERA_CONTAINER_COORDINATES)
-    camera_fig = plot_offset_values(camera_frames, camera_offsets,
+    ccc_fig = plot_offset_values(camera_frames, camera_offsets,
                                     title='Camera Offset Values',
                                     color='gray',
                                     ylabel="Position on 'Camera Geometry'",
@@ -1541,7 +1567,7 @@ if __name__ == "__main__":
     # ------------------------------------------------------------
     print("\n===== PROCESSING AUGMENTATION SUMMARY =====")
     augmentation_summary_file = AUGMENTATION_SUMMARY
-    augmentation_fig = plot_augmentation_summary(augmentation_summary_file,
+    as_fig = plot_augmentation_summary(augmentation_summary_file,
                                                  title="Augmentation Summary",
                                                  bar_color='gray')
     
@@ -1553,12 +1579,12 @@ if __name__ == "__main__":
     # ------------------------------------------------------------
     # Save plots as image files (with 300 dpi resolution)
     # ------------------------------------------------------------
-    debris_fig.savefig(os.path.join(ORBIT_CONTAINER_COORDINATES, "Orbit Container Plot.png"), dpi=300, bbox_inches='tight')
-    container_fig.savefig(os.path.join(DEBRIS_TRACKING_CONTAINER_COORDINATES, "Debris Tracking Container Plot.png"), dpi=300)
-    camera_fig.savefig(os.path.join(CAMERA_CONTAINER_COORDINATES, "camera_container_plot.png"), dpi=300)
-    debris_quaternion_fig.savefig(os.path.join(QUATERNION_COORDINATES, "Debris Orientation Quaternion.png"), dpi=300)
-    debris_euler_fig.savefig(os.path.join(EULER_COORDINATES, "Debris Orientation Euler.png"), dpi=300)
-    augmentation_fig.savefig(os.path.join(os.path.dirname(augmentation_summary_file), "Augmentation Summary Plot.png"), dpi=300)
+    occ_fig.savefig(os.path.join(ORBIT_CONTAINER_COORDINATES, "Orbit Container Plot.png"), dpi=300, bbox_inches='tight')
+    dtcc_fig.savefig(os.path.join(DEBRIS_TRACKING_CONTAINER_COORDINATES, "Debris Tracking Container Plot.png"), dpi=300)
+    ccc_fig.savefig(os.path.join(CAMERA_CONTAINER_COORDINATES, "Camera Container Plot.png"), dpi=300)
+    qc_fig.savefig(os.path.join(QUATERNION_COORDINATES, "Debris Orientation Quaternion.png"), dpi=300)
+    ec_fig.savefig(os.path.join(EULER_COORDINATES, "Debris Orientation Euler.png"), dpi=300)
+    as_fig.savefig(os.path.join(os.path.dirname(augmentation_summary_file), "Augmentation Summary Plot.png"), dpi=300)
 
     # Adjust layout and display all figures
     plt.tight_layout()
