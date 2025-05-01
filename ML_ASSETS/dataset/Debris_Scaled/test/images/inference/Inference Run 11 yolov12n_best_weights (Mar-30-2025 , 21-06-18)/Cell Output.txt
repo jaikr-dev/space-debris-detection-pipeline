@@ -1,0 +1,69 @@
+Loading model from: C:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset6\Debris_Scaled\Run 11 yolo12n (Mar-28-2025 , 11-45-29)\weights\best.pt
+Running inference on images in: C:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset6\Debris_Scaled\test\images\Hubble_Real_Life_3.jpg
+
+image 1/1 C:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset6\Debris_Scaled\test\images\Hubble_Real_Life_3.jpg: 640x640 1 Hubble, 31.6ms
+Speed: 5.7ms preprocess, 31.6ms inference, 2.5ms postprocess per image at shape (1, 3, 640, 640)
+Results saved to [1mC:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset6\Debris_Scaled\test\images\inference\Inference Run 11 yolov12n_best_weights (Mar-30-2025 , 21-06-18)[0m
+Inference completed. Results saved to: C:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset6\Debris_Scaled\test\images\inference\Inference Run 11 yolov12n_best_weights (Mar-30-2025 , 21-06-18)
+
+[ultralytics.engine.results.Results object with attributes:
+ 
+ boxes: ultralytics.engine.results.Boxes object
+ keypoints: None
+ masks: None
+ names: {0: 'Satellite', 1: 'Envisat', 2: 'Hubble', 3: 'Falcon 9 F&S'}
+ obb: None
+ orig_img: array([[[  2,   2,   2],
+         [  2,   2,   2],
+         [  2,   2,   2],
+         ...,
+         [  4,   5,   3],
+         [  4,   5,   3],
+         [  4,   5,   3]],
+ 
+        [[  2,   2,   2],
+         [  2,   2,   2],
+         [  2,   2,   2],
+         ...,
+         [  4,   5,   3],
+         [  4,   5,   3],
+         [  4,   5,   3]],
+ 
+        [[  2,   2,   2],
+         [  2,   2,   2],
+         [  2,   2,   2],
+         ...,
+         [  4,   5,   3],
+         [  4,   5,   3],
+         [  4,   5,   3]],
+ 
+        ...,
+ 
+        [[164, 157, 154],
+         [162, 155, 152],
+         [161, 154, 151],
+         ...,
+         [206, 215, 218],
+         [204, 213, 216],
+         [202, 211, 214]],
+ 
+        [[164, 157, 154],
+         [163, 156, 153],
+         [163, 156, 153],
+         ...,
+         [209, 219, 219],
+         [207, 217, 217],
+         [205, 215, 215]],
+ 
+        [[163, 158, 155],
+         [165, 160, 157],
+         [167, 162, 159],
+         ...,
+         [214, 222, 222],
+         [212, 220, 220],
+         [210, 218, 218]]], dtype=uint8)
+ orig_shape: (599, 599)
+ path: 'C:\\Users\\Jai\\Downloads\\Individual Project Folder\\yolov8-project\\dataset6\\Debris_Scaled\\test\\images\\Hubble_Real_Life_3.jpg'
+ probs: None
+ save_dir: 'C:\\Users\\Jai\\Downloads\\Individual Project Folder\\yolov8-project\\dataset6\\Debris_Scaled\\test\\images\\inference\\Inference Run 11 yolov12n_best_weights (Mar-30-2025 , 21-06-18)'
+ speed: {'preprocess': 5.685400043148547, 'inference': 31.59959998447448, 'postprocess': 2.4970999802462757}]
