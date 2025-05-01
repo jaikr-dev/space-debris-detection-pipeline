@@ -1,0 +1,9 @@
+Augmentation Summary:
+  gaussian_blur: 138 image(s) augmented
+  vignetting: 157 image(s) augmented
+  motion_blur: 149 image(s) augmented
+  cosmic_ray_strikes: 156 image(s) augmented
+  grayscale: 146 image(s) augmented
+  lens_distortion: 154 image(s) augmented
+  poisson_blur: 153 image(s) augmented
+  random_occlusion: 147 image(s) augmented

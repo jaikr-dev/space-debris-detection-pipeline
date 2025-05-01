@@ -1,0 +1,11 @@
+path: C:\Users\Jai\Downloads\Individual Project Folder\yolov8-project\dataset6\Debris_Scaled
+train: train/images
+val: val/images
+test: test/images
+
+nc: 4
+names:
+    0: Satellite
+    1: Envisat
+    2: Hubble
+    3: Falcon 9 F&S
