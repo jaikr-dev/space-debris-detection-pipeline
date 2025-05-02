@@ -1,10 +1,14 @@
 # Space Debris Detection Pipeline
 
-[![Python](https://img.shields.io/badge/Python-3.12-blue.
-svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
 [![Blender](https://img.shields.io/badge/Blender-4.2-purple.svg)](https://www.blender.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Weights & Biases](https://img.shields.io/badge/Weights%20&%20Biases-Tracking-yellow.svg)](https://wandb.ai/)
+
+<p align="left">
+    <img src="ASSETS\Repository_Banner.jpg" alt="Space Debris Detection Pipeline" width="800"/>
+</p>
+
 ## 🌟 Highlights
 
 - **End-to-end pipeline** for space debris detection using synthetic images, computer vision, and deep learning, designed to address the lack of labeled datasets and high cost of real-world data collection.
