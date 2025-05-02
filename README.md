@@ -4,6 +4,7 @@
 [![Blender](https://img.shields.io/badge/Blender-4.2-purple.svg)](https://www.blender.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Weights & Biases](https://img.shields.io/badge/Weights%20&%20Biases-Tracking-yellow.svg)](https://wandb.ai/)
+[![Repo Size](https://img.shields.io/github/repo-size/jaikr-dev/space-debris-detection-pipeline?color=green&label=Repo%20Size)](https://github.com/jaikr-dev/space-debris-detection-pipeline)
 
 <p align="left">
     <img src="ASSETS\Repository_Banner.jpg" alt="Space Debris Detection Pipeline" width="800"/>
@@ -306,7 +307,7 @@ The space debris detection pipeline achieves the following performance metrics:
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
-## 📝 Notes
+## 📝 Closing Notes
 Long read, but I hope you found it interesting! If you have any questions or feedback, feel free to reach out. I’m always open to learning and improving.
 
-Wishing you clear skies and smooth orbits! 
+Wishing you clear skies and smooth orbits!
