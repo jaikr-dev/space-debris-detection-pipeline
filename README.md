@@ -27,13 +27,13 @@ I'm Jai, and I built this project out of a deep fascination with space technolog
 
 Along the way, I learned a ton - about space, technology, and myself. I saw firsthand what it takes to turn a single idea into a fully working system (woah). I hope this repository helps others on a similar path or sparks new ideas in the process.
 
-### 🚀 Motivation
+## 🚀 Motivation
 
 Space debris poses an escalating threat to satellites, human missions, and the long-term sustainability of space operations. As thousands of objects continue to accumulate in Earth’s orbit, the risk of collisions grows, and so does the urgency to monitor and manage debris effectively. This project was inspired by my fascination with space technology and computer vision, and by a desire to contribute meaningful tools to the field of space situational awareness using modern AI.
 
 Nearly 50 years ago, NASA scientist Donald Kessler warned: “Keep cluttering up space, and we'll eventually lock ourselves out of it.” That warning feels more real than ever today. With the high costs and scarcity of real-world debris data, I saw an opportunity to create a scalable, affordable solution: one that blends synthetic image generation and deep learning to help push the boundaries of real-time space debris detection.
 
-### 🔍 Project Structure
+## 🔍 Project Structure
 
 ```
 space-debris-detection-pipeline/
