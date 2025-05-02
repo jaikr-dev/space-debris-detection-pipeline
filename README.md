@@ -305,3 +305,8 @@ The space debris detection pipeline achieves the following performance metrics:
 ## 📄 License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+## 📝 Notes
+Long read, but I hope you found it interesting! If you have any questions or feedback, feel free to reach out. I’m always open to learning and improving.
+
+Wishing you clear skies and smooth orbits! 
