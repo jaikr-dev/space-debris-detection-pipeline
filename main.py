@@ -52,6 +52,7 @@ import albumentations as A      # Image augmentation library
 #------------------------------------------------------------------------------
 # Base directory configurations
 #------------------------------------------------------------------------------
+# !!! CHANGE THIS !!! - Set to your project directory path
 PROJECT_BASE = r"C:\Users\Jai\Documents\GitHub\space-debris-detection-pipeline"
 BLENDER_ASSETS_BASE = os.path.join(PROJECT_BASE, "BLENDER_ASSETS")
 ML_ASSETS_BASE = os.path.join(PROJECT_BASE, "ML_ASSETS")
@@ -72,6 +73,7 @@ CONFIG_PATH = os.path.join(DEBRIS_SCALED_DIR, "config_scaled.yaml")
 #------------------------------------------------------------------------------
 # Blender application and script paths
 #------------------------------------------------------------------------------
+# !!! CHANGE THIS !!! - Set to your Blender executable path
 BLENDER_EXECUTABLE = r"C:\Program Files\Blender Foundation\Blender 4.2\blender.exe"
 BLEND_FILE = os.path.join(BLENDER_ASSETS_BASE, "blender_files", "model.blend")
 BLENDER_SCRIPT = os.path.join(BLENDER_ASSETS_BASE, "blender_files", "blender_script.py")
@@ -95,21 +97,28 @@ SCRIPTS_DIR = os.path.join(BLENDER_ASSETS_BASE, "Python Scripts")
 #------------------------------------------------------------------------------
 # YOLOv8 training configurations
 #------------------------------------------------------------------------------
+# !!! CHANGE THIS !!! - Set your own Weights & Biases API key or use environment variable
 WANDB_API_KEY = os.getenv('WANDB_API_KEY', "3a215434bfc6659b2f1ae767e669c8dcf1964a84")
+# !!! OPTIONAL !!! - Change project name if desired
 WANDB_PROJECT_NAME = "yolov8-debris-detection"
+# !!! OPTIONAL !!! - Change model type if desired (yolov8n.pt, yolov8s.pt, etc.)
 MODEL_TYPE = "yolov8n.pt"
+# !!! OPTIONAL !!! - Change run number for tracking experiments
 RUN_NUMBER = "Run 9"
+# !!! OPTIONAL !!! - Adjust training parameters if needed
 EPOCH = 100
 BATCH_SIZE = 16
 
 #------------------------------------------------------------------------------
 # YOLOv8 inference configurations
 #------------------------------------------------------------------------------
+# !!! OPTIONAL !!! - Adjust confidence threshold for detections
 CONFIDENCE_THRESHOLD = 0.60
 
 #------------------------------------------------------------------------------
 # YOLOv-n confusion matrix CSV directories. Directories must be set manually each time. 
 #------------------------------------------------------------------------------
+# !!! CHANGE THESE !!! - Update with your actual run directories after training
 CONFUSION_MATRIX_8 = os.path.join(DEBRIS_SCALED_DIR,r'Run 9 yolov8n (Mar-25-2025 , 09-49-56)\confusion_matrix_raw.csv')
 CONFUSION_MATRIX_11 = os.path.join(DEBRIS_SCALED_DIR,r'Run 10 yolo11n (Mar-27-2025 , 22-49-30)\confusion_matrix_raw.csv')
 CONFUSION_MATRIX_12 = os.path.join(DEBRIS_SCALED_DIR,r'Run 11 yolo12n (Mar-28-2025 , 11-45-29)\confusion_matrix_raw.csv')
@@ -138,7 +147,6 @@ LATO_REGULAR_PATH = os.path.join(PROJECT_BASE,"ASSETS","Lato-Regular.ttf")
 LATO_BOLD_PATH = os.path.join(PROJECT_BASE,"ASSETS","Lato-Bold.ttf")
 LATO_ITALIC_PATH = os.path.join(PROJECT_BASE,"ASSETS","Lato-Italic.ttf")
 BG_IMAGE = os.path.join(PROJECT_BASE,"ASSETS","BG_IMAGE.png")
-
 
 # %%
 # %%
