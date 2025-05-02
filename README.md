@@ -59,9 +59,9 @@ space-debris-detection-pipeline/
 
 ### Synthetic Test Image Examples
 <p float="left">
-  <img src="ML_ASSETS/dataset/Debris_Scaled/test/images/000193.jpg" width="200" alt="Test Image 1"/>
-  <img src="ML_ASSETS/dataset/Debris_Scaled/test/images/000590.jpg" width="200" alt="Test Image 2" />
-  <img src="ML_ASSETS/dataset/Debris_Scaled/test/images/000598.jpg" width="200" alt="Test Image 3" />
+  <img src="ML_ASSETS/dataset/Debris_Scaled/test/images/000193.jpg" width="300" alt="Test Image 1"/>
+  <img src="ML_ASSETS/dataset/Debris_Scaled/test/images/000590.jpg" width="300" alt="Test Image 2" />
+  <img src="ML_ASSETS/dataset/Debris_Scaled/test/images/000598.jpg" width="300" alt="Test Image 3" />
 </p>
 
 ### Real-world Test Image Examples
