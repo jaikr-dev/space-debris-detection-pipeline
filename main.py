@@ -95,6 +95,22 @@ AUGMENTATION_SUMMARY = os.path.join(DEBRIS_SCALED_DIR, 'Augmentations Summary.tx
 SCRIPTS_DIR = os.path.join(BLENDER_ASSETS_BASE, "Python Scripts")
 
 #------------------------------------------------------------------------------
+# Recreating config file after scaling the RAW dataset
+#------------------------------------------------------------------------------
+# !!! OPTIONAL !!! - Change no of classes (nc) and class names (names) if more classes are added/removed from model.blend
+CONFIG_DATA = f"""path: {DEBRIS_SCALED_DIR}
+train: train/images
+val: val/images
+test: test/images
+
+nc: 4
+names:
+    0: Satellite
+    1: Envisat
+    2: Hubble
+    3: Falcon 9 F&S
+"""
+#------------------------------------------------------------------------------
 # YOLOv8 training configurations
 #------------------------------------------------------------------------------
 # !!! CHANGE THIS !!! - Set your own Weights & Biases API key or use environment variable
@@ -268,21 +284,8 @@ def resize_and_scale_dataset() -> None:
     # Configuration File Creation
     #--------------------------------------------------------------------------
     # Create configuration file for the scaled dataset
-    config_data = f"""path: {DEBRIS_SCALED_DIR}
-train: train/images
-val: val/images
-test: test/images
-
-nc: 4
-names:
-    0: Satellite
-    1: Envisat
-    2: Hubble
-    3: Falcon 9 F&S
-"""
-    
     with open(CONFIG_PATH, "w") as f:
-        f.write(config_data)
+        f.write(CONFIG_DATA)
     
     print(f"Config file created at: {CONFIG_PATH}")
 
